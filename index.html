@@ -1403,6 +1403,44 @@
             });
         }
 
+        // Swipe navigation
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const SWIPE_THRESHOLD = 50;
+        const views = ['timer', 'history', 'reports'];
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) < SWIPE_THRESHOLD) return;
+
+            // Find current view
+            const currentBtn = document.querySelector('.nav-btn.active');
+            const currentView = currentBtn.dataset.view;
+            const currentIndex = views.indexOf(currentView);
+
+            let newIndex;
+            if (diff > 0) {
+                // Swipe left = next view
+                newIndex = Math.min(currentIndex + 1, views.length - 1);
+            } else {
+                // Swipe right = previous view
+                newIndex = Math.max(currentIndex - 1, 0);
+            }
+
+            if (newIndex !== currentIndex) {
+                document.querySelector(`[data-view="${views[newIndex]}"]`).click();
+            }
+        }
+
         // ============================================
         // DATE DISPLAY
         // ============================================
